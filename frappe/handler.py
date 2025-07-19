@@ -27,6 +27,11 @@ if TYPE_CHECKING:
 ALLOWED_MIMETYPES = (
 	"image/png",
 	"image/jpeg",
+	"image/gif",
+	"image/webp",
+	"image/svg+xml",
+	"image/tiff",  # May not display in all browsers
+	"image/heic",  # May not display in all browsers
 	"application/pdf",
 	"application/msword",
 	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",

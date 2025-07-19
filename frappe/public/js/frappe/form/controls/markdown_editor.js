@@ -97,6 +97,16 @@ frappe.ui.form.ControlMarkdownEditor = class ControlMarkdownEditor extends (
 						this.editor.getCursorPosition(),
 						`![](${encodeURI(file_doc.file_url)})`
 					);
+					
+					// Add warning for unsupported formats
+					if (file_doc.file_name && (file_doc.file_name.toLowerCase().endsWith('.tiff') || 
+						file_doc.file_name.toLowerCase().endsWith('.tif') || 
+						file_doc.file_name.toLowerCase().endsWith('.heic'))) {
+						frappe.show_alert({
+							message: __('Warning: {0} format may not display properly in all browsers. Consider using JPG, PNG, or WebP for better compatibility.', [file_doc.file_name.split('.').pop().toUpperCase()]),
+							indicator: "orange",
+						});
+					}
 				},
 			});
 		});
