@@ -64,18 +64,14 @@ frappe.ui.form.ControlAttach = class ControlAttach extends frappe.ui.form.Contro
 	}
 	on_attach_doc_image() {
 		this.set_upload_options();
-		this.upload_options.restrictions.allowed_file_types = ["image/*"];
-		// Add warning for unsupported formats
-		this.upload_options.on_success = (file_doc) => {
-			if (file_doc.file_name && (file_doc.file_name.toLowerCase().endsWith('.tiff') || 
-				file_doc.file_name.toLowerCase().endsWith('.tif') || 
-				file_doc.file_name.toLowerCase().endsWith('.heic'))) {
-				frappe.show_alert({
-					message: __('Warning: {0} format may not display properly in all browsers. Consider using JPG, PNG, or WebP for better compatibility.', [file_doc.file_name.split('.').pop().toUpperCase()]),
-					indicator: "orange",
-				});
-			}
-		};
+		this.upload_options.restrictions.allowed_file_types = [
+			"image/jpeg",
+			"image/jpg",
+			"image/png",
+			"image/gif", 
+			"image/webp",
+			"image/svg+xml"
+		];
 		this.file_uploader = new frappe.ui.FileUploader(this.upload_options);
 	}
 	set_upload_options() {

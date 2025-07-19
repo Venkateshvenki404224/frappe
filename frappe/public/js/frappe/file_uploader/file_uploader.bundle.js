@@ -42,6 +42,28 @@ class FileUploader {
 				restrictions.allowed_file_types = allowed_extensions
 					.split("\n")
 					.map((ext) => `.${ext}`);
+			} else {
+				// Default restrictions for general file uploads - exclude unsupported image formats
+				restrictions.allowed_file_types = [
+					// Supported image formats
+					"image/jpeg",
+					"image/jpg", 
+					"image/png",
+					"image/gif",
+					"image/webp",
+					"image/svg+xml",
+					// Common document formats
+					"application/pdf",
+					"application/msword",
+					"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+					"application/vnd.ms-excel",
+					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					"text/plain",
+					"text/csv",
+					// Video formats
+					"video/quicktime",
+					"video/mp4"
+				];
 			}
 		}
 

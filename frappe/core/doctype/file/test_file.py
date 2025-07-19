@@ -105,25 +105,19 @@ class TestExtensionValidations(IntegrationTestCase):
 		frappe.db.rollback()
 		self.assertFalse(bad_file.exists_on_disk())
 
-	@IntegrationTestCase.change_settings("System Settings", {"allowed_file_extensions": "JPG\nPNG\nGIF\nTIFF\nHEIC"})
-	def test_image_formats_with_warnings(self):
-		"""Test that TIFF and HEIC formats are allowed but may have browser compatibility issues"""
+	@IntegrationTestCase.change_settings("System Settings", {"allowed_file_extensions": "JPG\nPNG\nGIF"})
+	def test_unsupported_image_formats_rejected(self):
+		"""Test that unsupported image formats like TIFF and HEIC are rejected"""
 		set_request(method="POST", path="/")
 		file_name = frappe.generate_hash()
-		# Create a simple JPEG content (minimal valid JPEG)
 		jpeg_content = b'\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x01\x00H\x00H\x00\x00\xff\xdb\x00C\x00\x08\x06\x06\x07\x06\x05\x08\x07\x07\x07\t\t\x08\n\x0c\x14\r\x0c\x0b\x0b\x0c\x19\x12\x13\x0f\x14\x1d\x1a\x1f\x1e\x1d\x1a\x1c\x1c $.\' ",#\x1c\x1c(7),01444\x1f\'9=82<.342\xff\xc0\x00\x11\x08\x00\x01\x00\x01\x01\x01\x11\x00\x02\x11\x01\x03\x11\x01\xff\xc4\x00\x14\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\xff\xc4\x00\x14\x10\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xda\x00\x0c\x03\x01\x00\x02\x11\x03\x11\x00\x3f\x00\xaa\xff\xd9'
 		
-		# Test that TIFF format is allowed (but may not display in all browsers)
-		tiff_file = frappe.new_doc("File", file_name=f"{file_name}.tiff", content=jpeg_content).insert()
-		frappe.db.rollback()
-		self.assertFalse(tiff_file.exists_on_disk())
+		tiff_file = frappe.new_doc("File", file_name=f"{file_name}.tiff", content=jpeg_content)
+		self.assertRaises(FileTypeNotAllowed, tiff_file.insert)
 		
-		# Test that HEIC format is allowed (but may not display in all browsers)
-		heic_file = frappe.new_doc("File", file_name=f"{file_name}.heic", content=jpeg_content).insert()
-		frappe.db.rollback()
-		self.assertFalse(heic_file.exists_on_disk())
+		heic_file = frappe.new_doc("File", file_name=f"{file_name}.heic", content=jpeg_content)
+		self.assertRaises(FileTypeNotAllowed, heic_file.insert)
 		
-		# Test that supported formats are allowed
 		jpg_file = frappe.new_doc("File", file_name=f"{file_name}.jpg", content=jpeg_content).insert()
 		frappe.db.rollback()
 		self.assertFalse(jpg_file.exists_on_disk())
